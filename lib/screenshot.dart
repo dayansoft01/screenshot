@@ -276,11 +276,17 @@ class ScreenshotState extends State<Screenshot> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: RepaintBoundary(
-          key: _controller._containerKey,
-          child: widget.child,
-        ),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: RepaintBoundary(
+                key: _controller._containerKey,
+                child: widget.child,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
