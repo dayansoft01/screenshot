@@ -3,6 +3,7 @@ library screenshot;
 // import 'dart:io';
 import 'dart:async';
 import 'dart:typed_data';
+
 // import 'package:path_provider/path_provider.dart';
 import 'dart:ui' as ui;
 
@@ -19,6 +20,7 @@ import 'src/platform_specific/file_manager/file_manager.dart';
 ///
 class ScreenshotController {
   late GlobalKey _containerKey;
+
   ScreenshotController() {
     _containerKey = GlobalKey();
   }
@@ -100,9 +102,8 @@ class ScreenshotController {
     double? pixelRatio,
     BuildContext? context,
     Size? targetSize,
-
   }) async {
-     ui.Image image = await widgetToUiImage(widget,
+    ui.Image image = await widgetToUiImage(widget,
         delay: delay,
         pixelRatio: pixelRatio,
         context: context,
@@ -113,13 +114,12 @@ class ScreenshotController {
     return byteData!.buffer.asUint8List();
   }
 
- 
   static Future<ui.Image> widgetToUiImage(
     Widget widget, {
     Duration delay: const Duration(seconds: 1),
     double? pixelRatio,
     BuildContext? context,
-    Size? targetSize, 
+    Size? targetSize,
   }) async {
     ///
     ///Retry counter
@@ -136,18 +136,24 @@ class ScreenshotController {
       ///
       child = InheritedTheme.captureAll(
         context,
-        MediaQuery(data: MediaQuery.of(context), child: Material(child:child,color: Colors.transparent, )),
+        MediaQuery(
+            data: MediaQuery.of(context),
+            child: Material(
+              child: child,
+              color: Colors.transparent,
+            )),
       );
     }
 
-    final RenderRepaintBoundary repaintBoundary =  RenderRepaintBoundary();
+    final RenderRepaintBoundary repaintBoundary = RenderRepaintBoundary();
 
     Size logicalSize = targetSize ??
         ui.window.physicalSize / ui.window.devicePixelRatio; // Adapted
     Size imageSize = targetSize ?? ui.window.physicalSize; // Adapted
 
     assert(logicalSize.aspectRatio.toStringAsPrecision(5) ==
-        imageSize.aspectRatio.toStringAsPrecision(5));    // Adapted (toPrecision was not available)
+        imageSize.aspectRatio
+            .toStringAsPrecision(5)); // Adapted (toPrecision was not available)
 
     final RenderView renderView = RenderView(
       window: ui.window,
@@ -238,14 +244,14 @@ class ScreenshotController {
 
     } while (isDirty && retryCounter >= 0);
 
-
-    return image;   // Adapted to directly return the image and not the Uint8List
+    return image; // Adapted to directly return the image and not the Uint8List
   }
 }
 
 class Screenshot<T> extends StatefulWidget {
   final Widget? child;
   final ScreenshotController controller;
+
   const Screenshot({
     Key? key,
     required this.child,
@@ -269,9 +275,11 @@ class ScreenshotState extends State<Screenshot> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return RepaintBoundary(
-      key: _controller._containerKey,
-      child: widget.child,
+    return SingleChildScrollView(
+      child: RepaintBoundary(
+        key: _controller._containerKey,
+        child: widget.child,
+      ),
     );
   }
 }
